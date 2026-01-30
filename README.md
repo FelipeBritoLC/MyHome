@@ -6,7 +6,7 @@
 * **Disciplina:** Padrões de Projeto de Software
 * **Período:** 5º Período
 * **Professor:** Alex Sandro da Cunha Rêgo
-* **Estudante:** Felipe
+* **Estudante:** Felipe de Brito, Joana Elise
 
 ---
 
