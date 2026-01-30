@@ -1,4 +1,6 @@
-TIPO;ENDERECO;AREA;QUARTOS;EXTRA
+TIPO;ENDERECO;AREA;VAR1;VAR2
 CASA;Rua das Flores, 123;150.0;3;true
 APARTAMENTO;Av. Paulista, 500;60.0;2;12
-CASA;Alameda das Fontes, 10;300.0;4;false
+TERRENO;Loteamento Sul, Gleba A;400.0;0;Residencial
+COMERCIAL;Av. Central, 10 - Sala 202;120.0;4;true
+CASA;Rua das Palmeiras, 45;110.0;2;false

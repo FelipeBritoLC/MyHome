@@ -39,7 +39,8 @@ public class Anuncio {
 
     // --- métodos existentes ---
     public void adicionarCanal(CanalNotificacao canal) { 
-        observadores.add(canal); 
+        observadores.add(canal);
+        ConsoleLogger.log("Canal de notificação registrado com sucesso");
     }
 
     public void notificar(String msg) { 
