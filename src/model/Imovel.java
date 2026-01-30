@@ -24,6 +24,10 @@ public abstract class Imovel implements Cloneable {
         return area; 
     }
 
+    public int getQuartos() {
+        return quartos;
+    }
+
     public void setArea(double a) { 
         this.area = a; 
     }

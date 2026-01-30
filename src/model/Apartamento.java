@@ -12,4 +12,8 @@ public class Apartamento extends Imovel {
     public String getTipo() { 
         return "Apartamento"; 
     }
+
+    public int getAndar() {
+        return andar;
+    }
 }

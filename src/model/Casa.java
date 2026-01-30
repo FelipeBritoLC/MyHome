@@ -12,4 +12,8 @@ public class Casa extends Imovel {
     public String getTipo() { 
         return "Casa"; 
     }
+
+    public boolean isTemQuintal() {
+        return temQuintal;
+    }
 }
