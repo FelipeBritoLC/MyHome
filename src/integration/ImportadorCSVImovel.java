@@ -1,6 +1,7 @@
 package integration;
 
 import model.*;
+import util.ConsoleLogger;
 
 public class ImportadorCSVImovel extends ImportadorArquivo<Imovel> {
 
@@ -21,7 +22,7 @@ public class ImportadorCSVImovel extends ImportadorArquivo<Imovel> {
                 return new Apartamento(endereco, area, quartos, andar);
             }
         } catch (Exception e) {
-            System.err.println("[AVISO] Linha ignorada por erro de formato: " + linha);
+            ConsoleLogger.erro("[AVISO] Linha ignorada por erro de formato: " + linha);
         }
         return null;
     }

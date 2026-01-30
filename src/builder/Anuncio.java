@@ -2,6 +2,7 @@ package builder;
 
 import model.Imovel;
 import state.*;
+import util.ConsoleLogger;
 import observerAndstrategy.CanalNotificacao;
 import memento.AnuncioMemento; 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Anuncio {
 
     // --- métodos do memento (RF08) ---
     public AnuncioMemento criarSnapshot() {
-        System.out.println("[SISTEMA] Estado guardado com sucesso.");
+        ConsoleLogger.log("[SISTEMA] Estado guardado com sucesso.");
         return new AnuncioMemento(titulo, descricao, preco);
     }
 
@@ -30,9 +31,9 @@ public class Anuncio {
             this.titulo = memento.getTitulo();
             this.descricao = memento.getDescricao();
             this.preco = memento.getPreco();
-            System.out.println("[SISTEMA] Estado restaurado para: " + titulo);
+            ConsoleLogger.log("[SISTEMA] Estado restaurado para: " + titulo);
         } else {
-            System.out.println("[ERRO] Nada para desfazer.");
+            ConsoleLogger.erro("[ERRO] Nada para desfazer.");
         }
     }
 

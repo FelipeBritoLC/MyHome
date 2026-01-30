@@ -1,16 +1,19 @@
 package state;
 
 import builder.Anuncio;
+import util.ConsoleLogger;
 
 public class EstadoAtivo implements EstadoAnuncio {
     public void publicar(Anuncio contexto) { 
-        System.out.println("O anúncio já está ativo!"); 
+        ConsoleLogger.log("O anúncio já está ativo!"); 
     }
 
     public void cancelar(Anuncio contexto) {
-        System.out.println("Anúncio finalizado/removido pelo usuário.");
+        ConsoleLogger.log("Anúncio finalizado/removido pelo usuário.");
         contexto.setEstado(new EstadoRascunho());
     }
     
-    public String getNomeEstado() { return "Ativo"; }
+    public String getNomeEstado() { 
+        return "Ativo"; 
+    }
 }

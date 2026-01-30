@@ -2,6 +2,7 @@ package validation;
 
 import builder.Anuncio;
 import config.ConfigManager;
+import util.ConsoleLogger;
 
 public class ValidadorPreco extends ValidadorAnuncio {
     @Override
@@ -9,7 +10,7 @@ public class ValidadorPreco extends ValidadorAnuncio {
         double precoMinimo = Double.parseDouble(ConfigManager.getInstance().getConfig("preco.minimo"));
         
         if (anuncio.getPreco() < precoMinimo) {
-            System.out.println("ERRO VALIDAÇÃO: Preço R$ " + anuncio.getPreco() + " abaixo do permitido.");
+            ConsoleLogger.erro("ERRO VALIDAÇÃO: Preço R$ " + anuncio.getPreco() + " abaixo do permitido.");
             return false;
         }
         return verificarProximo(anuncio);

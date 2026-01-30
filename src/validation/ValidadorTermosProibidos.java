@@ -2,6 +2,7 @@ package validation;
 
 import builder.Anuncio;
 import config.ConfigManager;
+import util.ConsoleLogger;
 
 public class ValidadorTermosProibidos extends ValidadorAnuncio {
     @Override
@@ -11,7 +12,7 @@ public class ValidadorTermosProibidos extends ValidadorAnuncio {
 
         for (String termo : listaTermos) {
             if (anuncio.getDescricao().toLowerCase().contains(termo.toLowerCase())) {
-                System.out.println("ERRO VALIDAÇÃO: Descrição contém termo proibido: " + termo);
+                ConsoleLogger.erro("ERRO VALIDAÇÃO: Descrição contém termo proibido: " + termo);
                 return false;
             }
         }

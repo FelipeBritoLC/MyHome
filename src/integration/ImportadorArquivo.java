@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.ConsoleLogger;
+
 public abstract class ImportadorArquivo<T> {
 
     // template method
@@ -24,9 +26,9 @@ public abstract class ImportadorArquivo<T> {
                     resultados.add(objeto);
                 }
             }
-            System.out.println("[IMPORTAÇÃO] Processamento concluído: " + resultados.size() + " itens.");
+            ConsoleLogger.log("[IMPORTAÇÃO] Processamento concluído: " + resultados.size() + " itens.");
         } catch (IOException e) {
-            System.err.println("[ERRO] Falha ao ler o ficheiro: " + e.getMessage());
+            ConsoleLogger.erro("[ERRO] Falha ao ler o ficheiro: " + e.getMessage());
         }
         
         return resultados;
