@@ -3,6 +3,7 @@ package builder;
 import model.Imovel;
 import state.*;
 import observerAndstrategy.CanalNotificacao;
+import memento.AnuncioMemento; 
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,21 +19,35 @@ public class Anuncio {
         this.estadoAtual = new EstadoRascunho();
     }
 
-    // Gerenciamento de Observers (RF05)
-    public void adicionarCanal(CanalNotificacao canal) { 
-        observadores.add(canal); 
+    // --- métodos do memento (RF08) ---
+    public AnuncioMemento criarSnapshot() {
+        System.out.println("[SISTEMA] Estado guardado com sucesso.");
+        return new AnuncioMemento(titulo, descricao, preco);
     }
-    
-    public void notificar(String mensagem) {
-        for (CanalNotificacao canal : observadores) {
-            canal.enviar(mensagem);
+
+    public void restaurar(AnuncioMemento memento) {
+        if (memento != null) {
+            this.titulo = memento.getTitulo();
+            this.descricao = memento.getDescricao();
+            this.preco = memento.getPreco();
+            System.out.println("[SISTEMA] Estado restaurado para: " + titulo);
+        } else {
+            System.out.println("[ERRO] Nada para desfazer.");
         }
     }
 
-    // Métodos de Estado - Agora notificam ao mudar
-    public void setEstado(EstadoAnuncio novoEstado) {
-        this.estadoAtual = novoEstado;
-        notificar("O anúncio '" + titulo + "' mudou para o estado: " + novoEstado.getNomeEstado());
+    // --- métodos existentes ---
+    public void adicionarCanal(CanalNotificacao canal) { 
+        observadores.add(canal); 
+    }
+
+    public void notificar(String msg) { 
+        observadores.forEach(c -> c.enviar(msg)); 
+    }
+
+    public void setEstado(EstadoAnuncio novo) {
+        this.estadoAtual = novo;
+        notificar("Anúncio '" + titulo + "' agora é " + novo.getNomeEstado());
     }
 
     public void solicitarPublicacao() { 
