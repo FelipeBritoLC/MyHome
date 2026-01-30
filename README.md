@@ -10,6 +10,14 @@
 
 ---
 
+## 🏗️ Arquitetura do Sistema
+Abaixo, o diagrama de classes detalha a estrutura do MyHome, destacando a implementação dos padrões criacionais, estruturais e comportamentais para garantir a fidelidade ao domínio solicitada:
+<p align="center">
+  <img src="docs/diagrama.png" alt="Diagrama de Classes MyHome" width="800">
+  <br>
+  <em>Figura 1: Arquitetura Técnica e Padrões de Projeto aplicados ao MyHome.</em>
+</p>
+
 ## 🚀 1. Descrição da Solução
 O **MyHome** é um ecossistema robusto para classificados de imóveis, desenvolvido em **Java Puro (Java SE)**, sem a dependência de frameworks externos. A solução foca em extensibilidade e desacoplamento, permitindo que novos tipos de imóveis, métodos de validação e canais de comunicação sejam adicionados sem a necessidade de modificar o núcleo do sistema (Princípio Aberto/Fechado).
 
