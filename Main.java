@@ -1,35 +1,44 @@
 import builder.Anuncio;
-import model.Casa;
-import validation.*;
-import observerAndstrategy.*;
+import model.*;
+import search.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // 1. Criar o anúncio (agora com preço válido para não dar erro)
-        Anuncio meuAnuncio = new Anuncio.Builder()
-            .comTitulo("Cobertura em Tambaú")
-            .comDescricao("Lindo imóvel com vista para o mar.")
-            .comPreco(5000.0) 
-            .paraImovel(new Casa("Av. Cabo Branco", 150, 3, false))
-            .build();
-
-        // 2. Configurar Notificações (Observer + Strategy)
-        meuAnuncio.adicionarCanal(new NotificadorEmail());
-        meuAnuncio.adicionarCanal(new NotificadorWhatsApp());
-
-        // 3. Corrente de Validação
-        ValidadorAnuncio corrente = new ValidadorPreco();
-        corrente.setProximo(new ValidadorTermosProibidos());
-
-        System.out.println("--- Início do Processo ---");
+        // 1. Criar uma base de dados fictícia
+        List<Anuncio> baseDeDados = new ArrayList<>();
         
-        if (corrente.validar(meuAnuncio)) {
-            // Cada chamada de solicitarPublicacao vai disparar os Observers
-            meuAnuncio.solicitarPublicacao(); // Rascunho -> Moderando
-            System.out.println("---");
-            meuAnuncio.solicitarPublicacao(); // Moderando -> Ativo
-        }
+        baseDeDados.add(new Anuncio.Builder()
+            .comTitulo("Apartamento no Centro")
+            .comPreco(2000.0)
+            .paraImovel(new Apartamento("Rua A", 50, 1, 2))
+            .build());
 
-        System.out.println("\nEstado Final: " + meuAnuncio);
+        baseDeDados.add(new Anuncio.Builder()
+            .comTitulo("Casa com Piscina")
+            .comPreco(7000.0)
+            .paraImovel(new Casa("Rua B", 200, 4, true))
+            .build());
+
+        baseDeDados.add(new Anuncio.Builder()
+            .comTitulo("Apartamento Vista Mar")
+            .comPreco(4500.0)
+            .paraImovel(new Apartamento("Av. Beira Mar", 80, 2, 10))
+            .build());
+
+        // 2. Configurar a Busca Avançada (RF06)
+        // Queremos: Título contém "Apartamento" E Preço até 3000
+        FiltroAnd buscaComplexa = new FiltroAnd();
+        buscaComplexa.adicionarFiltro(new FiltroTituloContem("Apartamento"));
+        buscaComplexa.adicionarFiltro(new FiltroPrecoMaximo(3000.0));
+
+        // 3. Executar a busca
+        System.out.println("--- Resultados da Busca ---");
+        for (Anuncio a : baseDeDados) {
+            if (buscaComplexa.isSatisfeitoPor(a)) {
+                System.out.println("Encontrado: " + a.getTitulo() + " - R$ " + a.getPreco());
+            }
+        }
     }
 }
