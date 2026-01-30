@@ -61,9 +61,14 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 ---
 
 ## 💡 4. Originalidade e Diferenciais Técnicos
-1.  **Registry-Based Factory:** O uso de um `Map` funcional no `ImovelFactory` torna o sistema "Plug & Play" para novos tipos de imóveis.
-2.  **Clean Logging:** A separação total da lógica de negócio da lógica de exibição (E2) garante que o sistema possa ser portado para uma interface Web ou Desktop sem alterações no Core.
-3.  **Fidelidade ao Domínio:** Atributos específicos como Zoneamento (Terrenos) e Salas/Recepção (Comercial) demonstram o entendimento real do problema imobiliário.
+
+1. **Registry-Based Factory (Diferencial de Código):** Ao contrário de implementações tradicionais com longas estruturas de if/else, o ImovelFactory utiliza um mapeamento funcional (Map). Isso torna o sistema "Plug & Play", permitindo adicionar novos tipos de imóveis (como 'Galpão' ou 'Chácara') com apenas uma linha de configuração, sem alterar a lógica de importação.
+
+
+2. **Mecanismo de Tolerância a Falhas (RF08 - Memento):** Implementamos um sistema de Undo/Redo (Desfazer/Refazer) para a edição de anúncios no estado de Rascunho. Isso permite que o anunciante recupere versões anteriores de um anúncio após edições acidentais, garantindo a integridade dos dados antes da submissão para moderação.
+
+
+3. **Encapsulamento Total de Mensagens (E2):** O uso do ConsoleLogger garante que nenhuma classe de domínio ou lógica de negócio possua dependência direta de saída de dados (System.out.println), cumprindo rigorosamente a exigência de reuso e separação de responsabilidades do projeto.
 
 ---
 
