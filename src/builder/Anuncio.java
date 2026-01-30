@@ -55,6 +55,10 @@ public class Anuncio {
         estadoAtual.publicar(this); 
     }
 
+    public Imovel getImovel() {
+        return imovel;
+    }
+
     public void solicitarCancelamento() { 
         estadoAtual.cancelar(this); 
     }
