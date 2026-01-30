@@ -1,36 +1,35 @@
-
-
 import builder.Anuncio;
 import model.Casa;
 import validation.*;
+import observerAndstrategy.*;
 
 public class Main {
     public static void main(String[] args) {
-        // 1. Criar um anúncio com o Builder (que contém um termo proibido "urgente")
+        // 1. Criar o anúncio (agora com preço válido para não dar erro)
         Anuncio meuAnuncio = new Anuncio.Builder()
-            .comTitulo("Casa de Praia")
-            .comDescricao("Venda URGENTE por motivo de viagem!")
-            .comPreco(500.0) // Preço abaixo do mínimo (1000.0) definido no ConfigManager
-            .paraImovel(new Casa("Orla de JP", 200, 4, true))
+            .comTitulo("Cobertura em Tambaú")
+            .comDescricao("Lindo imóvel com vista para o mar.")
+            .comPreco(5000.0) 
+            .paraImovel(new Casa("Av. Cabo Branco", 150, 3, false))
             .build();
 
-        System.out.println("Estado Inicial: " + meuAnuncio);
+        // 2. Configurar Notificações (Observer + Strategy)
+        meuAnuncio.adicionarCanal(new NotificadorEmail());
+        meuAnuncio.adicionarCanal(new NotificadorWhatsApp());
 
-        // 2. Configurar a Corrente de Validação (RF03)
-        ValidadorAnuncio checkPreco = new ValidadorPreco();
-        ValidadorAnuncio checkTermos = new ValidadorTermosProibidos();
-        checkPreco.setProximo(checkTermos);
+        // 3. Corrente de Validação
+        ValidadorAnuncio corrente = new ValidadorPreco();
+        corrente.setProximo(new ValidadorTermosProibidos());
 
-        // 3. Tentar publicar o anúncio
-        System.out.println("\n--- Iniciando Processo de Publicação ---");
+        System.out.println("--- Início do Processo ---");
         
-        if (checkPreco.validar(meuAnuncio)) {
+        if (corrente.validar(meuAnuncio)) {
+            // Cada chamada de solicitarPublicacao vai disparar os Observers
             meuAnuncio.solicitarPublicacao(); // Rascunho -> Moderando
+            System.out.println("---");
             meuAnuncio.solicitarPublicacao(); // Moderando -> Ativo
-        } else {
-            System.out.println("Publicação abortada: Corrija os erros acima.");
         }
 
-        System.out.println("Estado Final: " + meuAnuncio);
+        System.out.println("\nEstado Final: " + meuAnuncio);
     }
 }
