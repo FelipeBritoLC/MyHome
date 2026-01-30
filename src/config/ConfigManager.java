@@ -8,10 +8,8 @@ public class ConfigManager {
 
     private ConfigManager() {
         props = new Properties();
-        
         props.setProperty("moeda", "R$");
-        props.setProperty("taxa.plano.premium", "49.90");
-        props.setProperty("limite.fotos.gratis", "5");
+        props.setProperty("preco.minimo", "1000.0"); 
         props.setProperty("termos.proibidos", "grátis,oferta,imperdível,urgente");
     }
 
