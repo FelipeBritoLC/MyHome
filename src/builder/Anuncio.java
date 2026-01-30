@@ -1,50 +1,41 @@
 package builder;
 
 import model.Imovel;
+import state.*;
 
 public class Anuncio {
     private String titulo;
     private String descricao;
     private double preco;
     private Imovel imovel;
+    private EstadoAnuncio estadoAtual;
 
-    // construtor privado para forçar o uso do Builder
-    private Anuncio() {}
+    protected Anuncio() {
+        this.estadoAtual = new EstadoRascunho(); // Estado inicial (RF04)
+    }
+
+    // Métodos de Estado
+    public void setEstado(EstadoAnuncio novoEstado) { this.estadoAtual = novoEstado; }
+    public void solicitarPublicacao() { estadoAtual.publicar(this); }
+    public void solicitarCancelamento() { estadoAtual.cancelar(this); }
+
+    // Getters
+    public String getTitulo() { return titulo; }
+    public String getDescricao() { return descricao; }
+    public double getPreco() { return preco; }
+    public String getStatus() { return estadoAtual.getNomeEstado(); }
 
     @Override
     public String toString() {
-        return "ANÚNCIO: " + titulo + "\nImóvel: " + imovel.getTipo() + 
-               "\nPreço: R$ " + preco + "\nEndereço: " + imovel.getEndereco();
+        return String.format("[%s] %s - R$ %.2f", getStatus(), titulo, preco);
     }
 
     public static class Builder {
         private Anuncio anuncio = new Anuncio();
-
-        public Builder comTitulo(String titulo) {
-            anuncio.titulo = titulo;
-            return this;
-        }
-
-        public Builder comDescricao(String descricao) {
-            anuncio.descricao = descricao;
-            return this;
-        }
-
-        public Builder comPreco(double preco) {
-            anuncio.preco = preco;
-            return this;
-        }
-
-        public Builder paraImovel(Imovel imovel) {
-            anuncio.imovel = imovel;
-            return this;
-        }
-
-        public Anuncio build() {
-            if (anuncio.titulo == null || anuncio.imovel == null || anuncio.preco <= 0) {
-                throw new IllegalStateException("Anúncio incompleto! Verifique título, imóvel e preço.");
-            }
-            return anuncio;
-        }
+        public Builder comTitulo(String t) { anuncio.titulo = t; return this; }
+        public Builder comDescricao(String d) { anuncio.descricao = d; return this; }
+        public Builder comPreco(double p) { anuncio.preco = p; return this; }
+        public Builder paraImovel(Imovel i) { anuncio.imovel = i; return this; }
+        public Anuncio build() { return anuncio; }
     }
 }
