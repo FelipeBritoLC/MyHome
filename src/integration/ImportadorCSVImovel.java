@@ -1,6 +1,6 @@
 package integration;
 
-import model.*;
+import model.Imovel;
 import util.ConsoleLogger;
 
 public class ImportadorCSVImovel extends ImportadorArquivo<Imovel> {
@@ -9,21 +9,18 @@ public class ImportadorCSVImovel extends ImportadorArquivo<Imovel> {
     protected Imovel transformarLinhaEmObjeto(String linha) {
         try {
             String[] colunas = linha.split(";");
-            String tipo = colunas[0].toUpperCase();
-            String endereco = colunas[1];
-            double area = Double.parseDouble(colunas[2]);
-            int quartos = Integer.parseInt(colunas[3]);
-
-            if (tipo.equals("CASA")) {
-                boolean temQuintal = Boolean.parseBoolean(colunas[4]);
-                return new Casa(endereco, area, quartos, temQuintal);
-            } else if (tipo.equals("APARTAMENTO")) {
-                int andar = Integer.parseInt(colunas[4]);
-                return new Apartamento(endereco, area, quartos, andar);
+            String tipo = colunas[0];
+            
+            Imovel imovel = ImovelFactory.criar(tipo, colunas);
+            
+            if (imovel == null) {
+                ConsoleLogger.erro("Tipo de imóvel desconhecido: " + tipo);
             }
+            
+            return imovel;
         } catch (Exception e) {
-            ConsoleLogger.erro("[AVISO] Linha ignorada por erro de formato: " + linha);
+            ConsoleLogger.erro("Erro ao processar linha: " + linha + " -> " + e.getMessage());
+            return null;
         }
-        return null;
     }
 }
