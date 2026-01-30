@@ -1,0 +1,4 @@
+TIPO;ENDERECO;AREA;QUARTOS;EXTRA
+CASA;Rua das Flores, 123;150.0;3;true
+APARTAMENTO;Av. Paulista, 500;60.0;2;12
+CASA;Alameda das Fontes, 10;300.0;4;false
