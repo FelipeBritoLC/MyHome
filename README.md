@@ -13,7 +13,7 @@
 ## 🏗️ Arquitetura do Sistema
 Abaixo, o diagrama de classes detalha a estrutura do MyHome, destacando a implementação dos padrões criacionais, estruturais e comportamentais para garantir a fidelidade ao domínio solicitada:
 <p align="center">
-  <img src="docs/diagrama.png" alt="Diagrama de Classes MyHome" width="800">
+  <img src="diagrama.png" alt="Diagrama de Classes MyHome" width="800">
   <br>
   <em>Figura 1: Arquitetura Técnica e Padrões de Projeto aplicados ao MyHome.</em>
 </p>
