@@ -6,7 +6,7 @@
 * **Disciplina:** Padrões de Projeto de Software
 * **Período:** 5º Período
 * **Professor:** Alex Sandro da Cunha Rêgo
-* **Estudante:** Felipe
+* **Estudante:** Felipe de Brito, Joana Elise
 
 ---
 
@@ -82,7 +82,7 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 1.  Abra o terminal na pasta raiz do projeto.
 2.  Compile todas as classes:
     ```bash
-    javac -d bin src/**/*.java Main.java
+    javac -d bin (Get-ChildItem -Recurse *.java).FullName
     ```
 3.  Execute a aplicação:
     ```bash
