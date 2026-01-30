@@ -8,7 +8,7 @@ public class ConfigManager {
 
     private ConfigManager() {
         props = new Properties();
-        // Valores padrão conforme o domínio imobiliário
+        
         props.setProperty("moeda", "R$");
         props.setProperty("taxa.plano.premium", "49.90");
         props.setProperty("limite.fotos.gratis", "5");

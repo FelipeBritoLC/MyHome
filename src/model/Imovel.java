@@ -1,6 +1,6 @@
 package model;
 
-// Interface Prototype
+// interface prototype
 public abstract class Imovel implements Cloneable {
     private String endereco;
     private double area;
@@ -12,11 +12,21 @@ public abstract class Imovel implements Cloneable {
         this.quartos = quartos;
     }
 
-    // Getters e Setters
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String e) { this.endereco = e; }
-    public double getArea() { return area; }
-    public void setArea(double a) { this.area = a; }
+    public String getEndereco() { 
+        return endereco; 
+    }
+
+    public void setEndereco(String e) { 
+        this.endereco = e; 
+    }
+
+    public double getArea() { 
+        return area; 
+    }
+
+    public void setArea(double a) { 
+        this.area = a; 
+    }
 
     @Override
     public Imovel clone() {
@@ -28,30 +38,4 @@ public abstract class Imovel implements Cloneable {
     }
 
     public abstract String getTipo();
-}
-
-// Subclasse Casa
-class Casa extends Imovel {
-    private boolean temQuintal;
-
-    public Casa(String endereco, double area, int quartos, boolean temQuintal) {
-        super(endereco, area, quartos);
-        this.temQuintal = temQuintal;
-    }
-
-    @Override
-    public String getTipo() { return "Casa"; }
-}
-
-// Subclasse Apartamento
-class Apartamento extends Imovel {
-    private int andar;
-
-    public Apartamento(String endereco, double area, int quartos, int andar) {
-        super(endereco, area, quartos);
-        this.andar = andar;
-    }
-
-    @Override
-    public String getTipo() { return "Apartamento"; }
 }

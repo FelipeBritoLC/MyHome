@@ -8,7 +8,7 @@ public class Anuncio {
     private double preco;
     private Imovel imovel;
 
-    // Construtor privado para forçar o uso do Builder
+    // construtor privado para forçar o uso do Builder
     private Anuncio() {}
 
     @Override
