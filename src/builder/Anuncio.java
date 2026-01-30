@@ -11,19 +11,38 @@ public class Anuncio {
     private EstadoAnuncio estadoAtual;
 
     protected Anuncio() {
-        this.estadoAtual = new EstadoRascunho(); // Estado inicial (RF04)
+        this.estadoAtual = new EstadoRascunho(); 
     }
 
     // Métodos de Estado
-    public void setEstado(EstadoAnuncio novoEstado) { this.estadoAtual = novoEstado; }
-    public void solicitarPublicacao() { estadoAtual.publicar(this); }
-    public void solicitarCancelamento() { estadoAtual.cancelar(this); }
+    public void setEstado(EstadoAnuncio novoEstado) { 
+        this.estadoAtual = novoEstado; 
+    }
 
-    // Getters
-    public String getTitulo() { return titulo; }
-    public String getDescricao() { return descricao; }
-    public double getPreco() { return preco; }
-    public String getStatus() { return estadoAtual.getNomeEstado(); }
+    public void solicitarPublicacao() { 
+        estadoAtual.publicar(this); 
+    }
+
+    public void solicitarCancelamento() { 
+        estadoAtual.cancelar(this); 
+    }
+
+
+    public String getTitulo() { 
+        return titulo; 
+    }
+
+    public String getDescricao() { 
+        return descricao; 
+    }
+
+    public double getPreco() { 
+        return preco; 
+    }
+
+    public String getStatus() { 
+        return estadoAtual.getNomeEstado(); 
+    }
 
     @Override
     public String toString() {
