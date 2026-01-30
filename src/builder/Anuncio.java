@@ -2,6 +2,9 @@ package builder;
 
 import model.Imovel;
 import state.*;
+import observerAndstrategy.CanalNotificacao;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Anuncio {
     private String titulo;
@@ -9,14 +12,27 @@ public class Anuncio {
     private double preco;
     private Imovel imovel;
     private EstadoAnuncio estadoAtual;
+    private List<CanalNotificacao> observadores = new ArrayList<>();
 
     protected Anuncio() {
-        this.estadoAtual = new EstadoRascunho(); 
+        this.estadoAtual = new EstadoRascunho();
     }
 
-    // Métodos de Estado
-    public void setEstado(EstadoAnuncio novoEstado) { 
-        this.estadoAtual = novoEstado; 
+    // Gerenciamento de Observers (RF05)
+    public void adicionarCanal(CanalNotificacao canal) { 
+        observadores.add(canal); 
+    }
+    
+    public void notificar(String mensagem) {
+        for (CanalNotificacao canal : observadores) {
+            canal.enviar(mensagem);
+        }
+    }
+
+    // Métodos de Estado - Agora notificam ao mudar
+    public void setEstado(EstadoAnuncio novoEstado) {
+        this.estadoAtual = novoEstado;
+        notificar("O anúncio '" + titulo + "' mudou para o estado: " + novoEstado.getNomeEstado());
     }
 
     public void solicitarPublicacao() { 
@@ -26,7 +42,6 @@ public class Anuncio {
     public void solicitarCancelamento() { 
         estadoAtual.cancelar(this); 
     }
-
 
     public String getTitulo() { 
         return titulo; 
