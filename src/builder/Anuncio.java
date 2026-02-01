@@ -1,10 +1,11 @@
 package builder;
 
+import model.Anunciante;
 import model.Imovel;
 import state.*;
 import util.ConsoleLogger;
 import observerAndstrategy.CanalNotificacao;
-import memento.AnuncioMemento; 
+import memento.AnuncioMemento;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class Anuncio {
     private String descricao;
     private double preco;
     private Imovel imovel;
+    private Anunciante anunciante;
     private EstadoAnuncio estadoAtual;
     private List<CanalNotificacao> observadores = new ArrayList<>();
 
@@ -60,6 +62,10 @@ public class Anuncio {
         return imovel;
     }
 
+    public Anunciante getAnunciante() {
+        return anunciante;
+    }
+
     public void solicitarCancelamento() { 
         estadoAtual.cancelar(this); 
     }
@@ -82,15 +88,25 @@ public class Anuncio {
 
     @Override
     public String toString() {
-        return String.format("[%s] %s - R$ %.2f", getStatus(), titulo, preco);
+        String dono = anunciante != null ? " por " + anunciante.getNome() : "";
+        return String.format("[%s] %s - R$ %.2f%s", getStatus(), titulo, preco, dono);
     }
 
     public static class Builder {
         private Anuncio anuncio = new Anuncio();
+
         public Builder comTitulo(String t) { anuncio.titulo = t; return this; }
         public Builder comDescricao(String d) { anuncio.descricao = d; return this; }
         public Builder comPreco(double p) { anuncio.preco = p; return this; }
         public Builder paraImovel(Imovel i) { anuncio.imovel = i; return this; }
-        public Anuncio build() { return anuncio; }
+        public Builder comAnunciante(Anunciante a) { anuncio.anunciante = a; return this; }
+
+        public Anuncio build() {
+            // Registra o anuncio na lista do anunciante, se houver
+            if (anuncio.anunciante != null) {
+                anuncio.anunciante.registrarAnuncio(anuncio);
+            }
+            return anuncio;
+        }
     }
 }

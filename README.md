@@ -37,8 +37,24 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 | **Chain of Responsibility** | `validation/` | Implementa uma esteira de validação automática. O anúncio percorre uma corrente de validadores (Preço, Termos Proibidos) antes de ser publicado. |
 | **Observer** | `observerAndstrategy/` | O Anúncio (Subject) notifica automaticamente os canais de comunicação sobre mudanças de estado ou eventos relevantes. |
 | **Strategy** | `observerAndstrategy/` | Permite alternar dinamicamente o meio de envio das notificações (E-mail, WhatsApp) através de uma interface comum. |
-| **Specification** | `search/` | Provê um mecanismo de busca avançada onde filtros (Preço, Título) são tratados como objetos e podem ser combinados (AND). |
+| **Composite** | `search/` | Permite a composição flexível de filtros de busca (como Preço, Título, etc.), possibilitando combinações dinâmicas (AND, OR, NOT) e hierárquicas de critérios, substituindo o padrão Specification. |
 | **Memento** | `memento/` | Captura e restaura o estado interno do anúncio, habilitando a funcionalidade de "Desfazer" (Undo) durante a edição. |
+
+---
+
+
+---
+
+## 👥 Novas Funcionalidades e Atualizações Recentes
+
+### 1. Troca do padrão Specification pelo Composite
+O sistema de filtros de busca foi totalmente refatorado: agora utiliza o padrão Composite, permitindo a criação de filtros compostos (AND, OR, NOT) de forma recursiva e flexível. Isso facilita a combinação de múltiplos critérios de busca e torna o código mais extensível e de fácil manutenção.
+
+### 2. Atualização das classes de filtros
+As classes de filtro em `src/search/` foram adaptadas para o novo padrão, aceitando listas de filtros filhos e permitindo a composição dinâmica de critérios. O fluxo de busca foi ajustado para trabalhar com a nova interface dos filtros compostos.
+
+### 3. Inclusão de Usuários (Comprador e Anunciante)
+Foram adicionadas as classes `Usuario`, `Comprador` e `Anunciante` em `src/model/`, representando os diferentes tipos de usuários do sistema. Agora, o Main permite a interação de usuários, diferenciando entre compradores (que buscam imóveis) e anunciantes (que cadastram anúncios), com autenticação, cadastro e ações específicas para cada perfil.
 
 ---
 
