@@ -87,6 +87,7 @@ MyHome/
         ├── ValidadorAnuncio.java
         ├── ValidadorPreco.java
         └── ValidadorTermosProibidos.java
+```
 
 ## 🚀 1. Descrição da Solução
 O **MyHome** é um ecossistema robusto para classificados de imóveis, desenvolvido em **Java Puro (Java SE)**, sem a dependência de frameworks externos. A solução foca em extensibilidade e desacoplamento, permitindo que novos tipos de imóveis, métodos de validação e canais de comunicação sejam adicionados sem a necessidade de modificar o núcleo do sistema (Princípio Aberto/Fechado).
