@@ -117,14 +117,14 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 ## 📋 3. Especificação dos Requisitos Resolvidos
 
 ### Requisitos Funcionais (RF)
-* **RF01 (Criação Guiada):** Uso do **Builder** para garantir que anúncios tenham título, preço e imóvel válidos.
-* **RF02 (Modelos Padrão):** Implementado via interface `Cloneable` no pacote `model`, permitindo a clonagem de protótipos de imóveis.
-* **RF03 (Moderação Automática):** Implementado via **Chain of Responsibility**, consultando termos proibidos definidos externamente.
-* **RF04 (Estados do Anúncio):** Máquina de estados completa que gerencia desde o rascunho até a venda ou suspensão do anúncio.
-* **RF05 (Notificações):** Estrutura de **Observer + Strategy** para múltiplos canais de comunicação.
-* **RF06 (Busca Avançada):** Padrão **Specification** para compor filtros dinâmicos sem poluir as classes de serviço.
-* **RF07 (Configuração Centralizada):** O `ConfigManager` carrega o arquivo `config.properties` da raiz do projeto.
-* **RF08 (Histórico/Undo):** Implementação de **Memento** para salvar e restaurar o estado do anúncio.
+* **RF01 (Criação Guiada):** Uso do padrão **Builder** para garantir a construção de anúncios íntegros, exigindo título, preço, anunciante e imóvel.
+* **RF02 (Modelos Padrão):** Implementado via padrão **Prototype** no pacote `model`, permitindo a clonagem de protótipos de imóveis carregados da base CSV sem novas leituras de disco.
+* **RF03 (Moderação Automática):** Utilização de **Chain of Responsibility** para validar anúncios contra uma lista de termos proibidos e faixas de preço parametrizadas.
+* **RF04 (Estados do Anúncio):** Máquina de estados (**State**) que gerencia o ciclo de vida (Rascunho, Moderando, Ativo, Suspenso, Vendido) e restringe ações de acordo com o estado atual.
+* **RF05 (Notificações):** Estrutura de **Observer + Strategy** para notificar múltiplos interessados via Telegram, E-mail e WhatsApp de forma desacoplada.
+* **RF06 (Busca Avançada):** Padrão **Composite** para compor filtros dinâmicos (Título, Preço) de forma recursiva, permitindo consultas complexas.
+* **RF07 (Configuração Centralizada):** Uso de **Singleton** para garantir que o `ConfigManager` gerencie o acesso global ao arquivo `config.properties`.
+* **RF08 (Histórico/Undo):** Implementação de **Memento** que captura snapshots do anúncio, permitindo a restauração de estados anteriores (Undo).
 
 ### Requisitos Estruturais (E)
 * **E1 (Carga de Dados):** Importação extensível de arquivos CSV através de **Template Method**.
