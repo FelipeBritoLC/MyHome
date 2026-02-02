@@ -1,5 +1,7 @@
 package observerAndstrategy;
 
+import model.Usuario;
+
 public interface CanalNotificacao {
-    void enviar(String mensagem);
+    void enviar(Usuario destinatario, String mensagem);
 }
