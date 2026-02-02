@@ -26,64 +26,54 @@ MyHome/
 ├── .github/
 │   └── appmod/
 │       └── appcat/
-├── bin/
-│   ├── builder/
-│   ├── config/
-│   ├── fachada/
-│   ├── integration/
-│   ├── memento/
-│   ├── model/
-│   ├── observerAndstrategy/
-│   ├── search/
-│   ├── state/
-│   ├── util/
-│   ├── validation/
-│   └── Main.class
-├── config.properties
-├── diagrama.png
-├── imoveis.csv
-├── Main.java
-├── README.md
-└── src/
+├── bin/                       # Arquivos compilados (.class)
+├── config.properties          # Configurações de negócio e chaves de API
+├── diagrama.png               # Diagrama de Classes UML
+├── imoveis.csv                # Base de dados para importação
+├── Main.java                  # Classe principal e demonstração
+├── README.md                  # Documentação do projeto
+└── src/                       # Código-fonte
     ├── builder/
     │   └── Anuncio.java
     ├── config/
     │   └── ConfigManager.java
     ├── fachada/
     │   └── MyHomeFachada.java
-    ├── integration/
+    ├── integration/           
     │   ├── CriadorImovel.java
     │   ├── ImovelFactory.java
     │   ├── ImportadorArquivo.java
     │   └── ImportadorCSVImovel.java
-    ├── memento/
+    ├── memento/              
     │   ├── AnuncioMemento.java
     │   └── HistoricoAnuncio.java
-    ├── model/
-    │   ├── Apartamento.java
-    │   ├── Casa.java
+    ├── model/                
+    │   ├── Anunciante.java
+    │   ├── Comprador.java
+    │   ├── Usuario.java
     │   ├── Imovel.java
+    │   ├── Casa.java
+    │   ├── Apartamento.java
     │   ├── ImovelComercial.java
     │   └── Terreno.java
-    ├── observerAndstrategy/
+    ├── observerAndstrategy/   
     │   ├── CanalNotificacao.java
     │   ├── NotificadorEmail.java
+    │   ├── NotificadorTelegram.java
     │   └── NotificadorWhatsApp.java
-    ├── search/
-    │   ├── FiltroAnd.java
+    ├── search/                
     │   ├── FiltroAnuncio.java
+    │   ├── FiltroComposto.java
     │   ├── FiltroPrecoMaximo.java
-    │   └── FiltroTituloContem.java
-    ├── state/
+    │   └── FiltroTitulo.java
+    ├── state/                
     │   ├── EstadoAnuncio.java
     │   ├── EstadoAtivo.java
     │   ├── EstadoModerando.java
     │   ├── EstadoRascunho.java
     │   ├── EstadoSuspenso.java
     │   └── EstadoVendido.java
-    ├── util/
-    │   └── ConsoleLogger.java
-    └── validation/
+    └── validation/            
         ├── ValidadorAnuncio.java
         ├── ValidadorPreco.java
         └── ValidadorTermosProibidos.java
