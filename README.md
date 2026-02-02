@@ -18,6 +18,76 @@ Abaixo, o diagrama de classes detalha a estrutura do MyHome, destacando a implem
   <em>Figura 1: Arquitetura Técnica e Padrões de Projeto aplicados ao MyHome.</em>
 </p>
 
+## 📂 Estrutura do Projeto
+
+```text
+MyHome/
+├── .git/
+├── .github/
+│   └── appmod/
+│       └── appcat/
+├── bin/
+│   ├── builder/
+│   ├── config/
+│   ├── fachada/
+│   ├── integration/
+│   ├── memento/
+│   ├── model/
+│   ├── observerAndstrategy/
+│   ├── search/
+│   ├── state/
+│   ├── util/
+│   ├── validation/
+│   └── Main.class
+├── config.properties
+├── diagrama.png
+├── imoveis.csv
+├── Main.java
+├── README.md
+└── src/
+    ├── builder/
+    │   └── Anuncio.java
+    ├── config/
+    │   └── ConfigManager.java
+    ├── fachada/
+    │   └── MyHomeFachada.java
+    ├── integration/
+    │   ├── CriadorImovel.java
+    │   ├── ImovelFactory.java
+    │   ├── ImportadorArquivo.java
+    │   └── ImportadorCSVImovel.java
+    ├── memento/
+    │   ├── AnuncioMemento.java
+    │   └── HistoricoAnuncio.java
+    ├── model/
+    │   ├── Apartamento.java
+    │   ├── Casa.java
+    │   ├── Imovel.java
+    │   ├── ImovelComercial.java
+    │   └── Terreno.java
+    ├── observerAndstrategy/
+    │   ├── CanalNotificacao.java
+    │   ├── NotificadorEmail.java
+    │   └── NotificadorWhatsApp.java
+    ├── search/
+    │   ├── FiltroAnd.java
+    │   ├── FiltroAnuncio.java
+    │   ├── FiltroPrecoMaximo.java
+    │   └── FiltroTituloContem.java
+    ├── state/
+    │   ├── EstadoAnuncio.java
+    │   ├── EstadoAtivo.java
+    │   ├── EstadoModerando.java
+    │   ├── EstadoRascunho.java
+    │   ├── EstadoSuspenso.java
+    │   └── EstadoVendido.java
+    ├── util/
+    │   └── ConsoleLogger.java
+    └── validation/
+        ├── ValidadorAnuncio.java
+        ├── ValidadorPreco.java
+        └── ValidadorTermosProibidos.java
+
 ## 🚀 1. Descrição da Solução
 O **MyHome** é um ecossistema robusto para classificados de imóveis, desenvolvido em **Java Puro (Java SE)**, sem a dependência de frameworks externos. A solução foca em extensibilidade e desacoplamento, permitindo que novos tipos de imóveis, métodos de validação e canais de comunicação sejam adicionados sem a necessidade de modificar o núcleo do sistema (Princípio Aberto/Fechado).
 
@@ -31,15 +101,16 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 | :--- | :--- | :--- |
 | **Singleton** | `config/ConfigManager.java` | Garante uma única instância para o carregamento e acesso global ao arquivo `config.properties`. |
 | **Builder** | `builder/Anuncio.java` | Facilita a criação guiada de anúncios complexos, garantindo que o objeto só seja instanciado se possuir os dados obrigatórios. |
+| **Prototype** | `model/Imovel.java` | Permite a clonagem eficiente de modelos de imóveis carregados da base CSV para a criação de novos anúncios. |
 | **Factory Method** | `integration/ImovelFactory.java` | Centraliza a criação de diferentes tipos de imóveis (Casa, Apto, Terreno, Comercial) utilizando um **Registry Map**, eliminando `if/else` excessivos. |
+| **Facade** | `fachada/MyHomeFachada.java` | Oferece uma interface simplificada que orquestra os subsistemas complexos (Builder, State, Observer) para a classe `Main`. |
 | **Template Method** | `integration/ImportadorArquivo.java` | Define a estrutura fixa do algoritmo de importação de arquivos, delegando o processamento específico de cada linha para as subclasses. |
 | **State** | `state/` | Gerencia o ciclo de vida do anúncio (Rascunho, Moderando, Ativo, Suspenso, Vendido), isolando a lógica de transição em classes próprias. |
 | **Chain of Responsibility** | `validation/` | Implementa uma esteira de validação automática. O anúncio percorre uma corrente de validadores (Preço, Termos Proibidos) antes de ser publicado. |
 | **Observer** | `observerAndstrategy/` | O Anúncio (Subject) notifica automaticamente os canais de comunicação sobre mudanças de estado ou eventos relevantes. |
-| **Strategy** | `observerAndstrategy/` | Permite alternar dinamicamente o meio de envio das notificações (E-mail, WhatsApp) através de uma interface comum. |
-| **Specification** | `search/` | Provê um mecanismo de busca avançada onde filtros (Preço, Título) são tratados como objetos e podem ser combinados (AND). |
+| **Strategy** | `observerAndstrategy/` | Permite alternar dinamicamente o meio de envio das notificações (Telegram, E-mail, WhatsApp) através de uma interface comum. |
+| **Composite** | `search/` | Provê um mecanismo de busca avançada onde filtros (Preço, Título) são tratados como objetos e podem ser combinados (AND). |
 | **Memento** | `memento/` | Captura e restaura o estado interno do anúncio, habilitando a funcionalidade de "Desfazer" (Undo) durante a edição. |
-
 ---
 
 ## 📋 3. Especificação dos Requisitos Resolvidos
@@ -66,9 +137,6 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 
 
 2. **Mecanismo de Tolerância a Falhas (RF08 - Memento):** Implementamos um sistema de Undo/Redo (Desfazer/Refazer) para a edição de anúncios no estado de Rascunho. Isso permite que o anunciante recupere versões anteriores de um anúncio após edições acidentais, garantindo a integridade dos dados antes da submissão para moderação.
-
-
-3. **Encapsulamento Total de Mensagens (E2):** O uso do ConsoleLogger garante que nenhuma classe de domínio ou lógica de negócio possua dependência direta de saída de dados (System.out.println), cumprindo rigorosamente a exigência de reuso e separação de responsabilidades do projeto.
 
 ---
 
