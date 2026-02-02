@@ -12,97 +12,92 @@ import validation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// importar -> clonar -> criar -> errar -> desfazer -> validar -> publicar -> buscar (ordem da apresentação)
 public class Main {
-
     public static void main(String[] args) {
-        ConsoleLogger.log("=== Iniciando demonstração do MyHome ===");
+        ConsoleLogger.log("=== INICIANDO DEMONSTRAÇÃO MYHOME ===");
 
-        // 1. Singleton (RF07)
+        // 1. Configurações Globais (Singleton - RF07)
         ConfigManager config = ConfigManager.getInstance();
-        ConsoleLogger.log("Configurações carregadas. Preço mínimo: " + config.getConfig("preco.minimo"));
-
-        // 2. Template Method + Factory (E1)
-        ConsoleLogger.log("\n--- FASE 1: Importação de Dados (CSV) ---");
+        
+        // 2. Carga de Dados (Template Method + Factory + E1)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 1: Importação de Imóveis (CSV) ---");
         ImportadorCSVImovel importador = new ImportadorCSVImovel();
-        List<Imovel> imoveisCarregados = importador.importar("imoveis.csv");
+        List<Imovel> baseImoveis = importador.importar("imoveis.csv");
 
-        // 3. Prototype (RF02)
-        ConsoleLogger.log("\n--- FASE 2: Uso de Protótipos (Clonagem) ---");
-        Imovel modelo = imoveisCarregados.get(0); // Pega a primeira Casa
-        Imovel copiaParaNovoAnuncio = modelo.clone();
-        copiaParaNovoAnuncio.setEndereco("Rua das Flores, 124 (Vizinho)");
-        ConsoleLogger.log("Protótipo clonado e ajustado: " + copiaParaNovoAnuncio.getEndereco());
+        // 3. Criação de Perfis de Usuários (Domínio)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 2: Identificação de Usuários ---");
+        Anunciante anunciante = new Anunciante("Felipe Corretor", "felipe@teste.com", "8399999999", "CRECI-123");
+        Comprador comprador = new Comprador("Carlos Cliente", "carlos@gmail.com", "8388888888");
+        ConsoleLogger.log("Usuários criados: " + anunciante.getNome() + " e " + comprador.getNome());
 
-        // 4. Builder (RF01)
-        ConsoleLogger.log("\n--- FASE 3: Criação de Anúncio com Builder ---");
+        // 4. Criação do Anúncio (Builder + Prototype - RF01/RF02)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 3: Elaboração do Anúncio ---");
+        Imovel imovelSelecionado = baseImoveis.get(0).clone(); // Usando protótipo
         Anuncio meuAnuncio = new Anuncio.Builder()
-                .comTitulo("Casa de Veraneio")
-                .comDescricao("Ótima oportunidade!")
-                .comPreco(2500.0)
-                .paraImovel(copiaParaNovoAnuncio)
+                .comAnunciante(anunciante)
+                .comTitulo("Cobertura Vista Mar")
+                .comDescricao("Luxuoso apartamento mobiliado.")
+                .comPreco(5000.0)
+                .paraImovel(imovelSelecionado)
                 .build();
-        ConsoleLogger.log("Anúncio criado: " + meuAnuncio);
+        ConsoleLogger.log("Anúncio em rascunho: " + meuAnuncio);
 
-        // 5. Memento (RF08)
-        ConsoleLogger.log("\n--- FASE 4: Histórico e Undo/Redo (Memento) ---");
+        // 5. Histórico de Edição (Memento - RF08)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 4: Teste de Histórico (Undo) ---");
         HistoricoAnuncio historico = new HistoricoAnuncio();
-        historico.guardar(meuAnuncio.criarSnapshot()); // salva estado original
+        historico.guardar(meuAnuncio.criarSnapshot());
 
-        ConsoleLogger.log("Editando anúncio com erro...");
+        ConsoleLogger.log("Fazendo alteração acidental...");
         meuAnuncio = new Anuncio.Builder()
-                .comTitulo("TITULO ERRADO")
-                .comPreco(0.1) // preco invalido
-                .paraImovel(copiaParaNovoAnuncio)
+                .comAnunciante(anunciante)
+                .comTitulo("ERRO NO TITULO")
+                .comPreco(0.50)
+                .paraImovel(imovelSelecionado)
                 .build();
+        
         ConsoleLogger.log("Estado com erro: " + meuAnuncio);
-
-        ConsoleLogger.log("Acionando DESFAZER...");
         meuAnuncio.restaurar(historico.desfazer());
-        ConsoleLogger.log("Estado recuperado: " + meuAnuncio);
+        ConsoleLogger.log("Após desfazer: " + meuAnuncio);
 
-        // 6. Observer + Strategy (RF05)
-        ConsoleLogger.log("\n--- FASE 5: Notificações Dinâmicas ---");
+        // 6. Configuração de Notificações (Observer + Strategy - RF05)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 5: Configuração de Canais ---");
         meuAnuncio.adicionarCanal(new NotificadorEmail());
         meuAnuncio.adicionarCanal(new NotificadorWhatsApp());
 
-        // 7. Chain of Responsibility (RF03) + State (RF04)
-        ConsoleLogger.log("\n--- FASE 6: Validação e Ciclo de Vida ---");
+        // 7. Moderação e Ciclo de Vida (Chain + State - RF03/RF04)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 6: Moderação e Publicação ---");
         ValidadorAnuncio corrente = new ValidadorPreco();
         corrente.setProximo(new ValidadorTermosProibidos());
 
         if (corrente.validar(meuAnuncio)) {
-            ConsoleLogger.log("Validação aprovada! Mudando estados...");
-            meuAnuncio.solicitarPublicacao(); // rascunho -> moderando
-            meuAnuncio.solicitarPublicacao(); // moderando -> ativo
-            
-            // Simulação de finalização
-            meuAnuncio.setEstado(new EstadoVendido());
+            meuAnuncio.solicitarPublicacao(); // Rascunho -> Moderando
+            meuAnuncio.solicitarPublicacao(); // Moderando -> Ativo
         }
 
-        // 8. Specification (RF06)
-        ConsoleLogger.log("\n--- FASE 7: Busca Avançada (Filtros) ---");
+        // 8. Busca Avançada pelo Comprador (Specification - RF06)
+        ConsoleLogger.log("");
+        ConsoleLogger.log("--- FASE 7: Experiência do Comprador ---");
         List<Anuncio> catalogo = new ArrayList<>();
-        catalogo.add(meuAnuncio); 
-        
-        // adiciona outro para teste
-        catalogo.add(new Anuncio.Builder()
-                .comTitulo("Apartamento Luxo")
-                .comPreco(8000.0)
-                .paraImovel(imoveisCarregados.get(1))
-                .build());
+        catalogo.add(meuAnuncio);
 
-        FiltroAnd filtroBusca = new FiltroAnd();
-        filtroBusca.adicionarFiltro(new FiltroTituloContem("Luxo"));
-        filtroBusca.adicionarFiltro(new FiltroPrecoMaximo(9000.0));
+        FiltroAnd busca = new FiltroAnd();
+        busca.adicionarFiltro(new FiltroTituloContem("Cobertura"));
+        busca.adicionarFiltro(new FiltroPrecoMaximo(10000.0));
 
-        ConsoleLogger.log("Pesquisando por 'Luxo' até R$ 9000...");
+        ConsoleLogger.log("Comprador " + comprador.getNome() + " pesquisando...");
         for (Anuncio a : catalogo) {
-            if (filtroBusca.isSatisfeitoPor(a)) {
-                ConsoleLogger.log("Resultado encontrado: " + a.getTitulo());
+            if (busca.isSatisfeitoPor(a)) {
+                ConsoleLogger.log("Resultado encontrado: " + a.getTitulo() + " - " + a.getStatus());
             }
         }
 
-        ConsoleLogger.log("\n=== Fim da demonstração do MyHome ===");
+        ConsoleLogger.log("");
+        ConsoleLogger.log("=== FIM DA DEMONSTRAÇÃO MYHOME ===");
     }
 }
