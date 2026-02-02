@@ -128,7 +128,7 @@ A arquitetura foi desenhada para suportar fluxos complexos de moderação, busca
 
 ### Requisitos Estruturais (E)
 * **E1 (Carga de Dados):** Importação extensível de arquivos CSV através de **Template Method**.
-* **E2 (Encapsulamento de Mensagens):** Para cumprir a exigência de evitar `System.out.println` no domínio, foi criada a classe `util.ConsoleLogger`, centralizando toda a comunicação de saída do sistema.
+* **E2 (Domínio Silencioso e Desacoplado):** Para cumprir a exigência de evitar `System.out.println` nas classes de lógica, o sistema utiliza o retorno de listas de mensagens (`List<String>`). Toda a comunicação de estado e eventos é gerada no domínio, orquestrada pela `MyHomeFachada` e exibida exclusivamente pela classe `Main`, garantindo que o núcleo do sistema seja independente de interface.
 
 ---
 
