@@ -3,14 +3,14 @@ package search;
 import builder.Anuncio;
 
 public class FiltroPrecoMaximo implements FiltroAnuncio {
-    private double precoLimite;
+    private double precoMax;
 
-    public FiltroPrecoMaximo(double precoLimite) {
-        this.precoLimite = precoLimite;
+    public FiltroPrecoMaximo(double precoMax) {
+        this.precoMax = precoMax;
     }
 
     @Override
-    public boolean isSatisfeitoPor(Anuncio anuncio) {
-        return anuncio.getPreco() <= precoLimite;
+    public boolean filtrar(Anuncio anuncio) {
+        return anuncio.getPreco() <= precoMax;
     }
 }

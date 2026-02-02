@@ -40,7 +40,7 @@ public class Anuncio {
 
     private void notificarInteressados(String mensagem) {
         for (CanalNotificacao canal : canais) {
-            // Criamos um conjunto para rastrear QUEM já recebeu a mensagem por esse canal
+
             Set<String> destinosJaAvisados = new HashSet<>();
 
             // 1. Notificar o Anunciante (Dono)
