@@ -6,18 +6,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.ConsoleLogger;
-
 public abstract class ImportadorArquivo<T> {
 
-    // template method
-    public final List<T> importar(String caminhoFicheiro) {
+    /**
+     * 
+     * @param caminhoFicheiro Caminho do arquivo a ser lido.
+     * @return list de objetos do tipo T.
+     * @throws IOException lança exceção para que o Main decida como exibir o erro.
+     */
+    public final List<T> importar(String caminhoFicheiro) throws IOException {
         List<T> resultados = new ArrayList<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoFicheiro))) {
             String linha;
+            
             if (temCabecalho()) {
-                br.readLine(); // pula a primeira linha
+                br.readLine(); // pula o cabeçalho
             }
 
             while ((linha = br.readLine()) != null) {
@@ -26,18 +30,15 @@ public abstract class ImportadorArquivo<T> {
                     resultados.add(objeto);
                 }
             }
-            ConsoleLogger.log("[IMPORTAÇÃO] Processamento concluído: " + resultados.size() + " itens.");
-        } catch (IOException e) {
-            ConsoleLogger.erro("[ERRO] Falha ao ler o ficheiro: " + e.getMessage());
-        }
+        } 
+
         
         return resultados;
     }
 
-    // passo específico que as subclasses devem implementar
+
     protected abstract T transformarLinhaEmObjeto(String linha);
 
-    // um gancho que pode ser sobrescrito se necessário
     protected boolean temCabecalho() {
         return true;
     }

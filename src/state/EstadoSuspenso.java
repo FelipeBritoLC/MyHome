@@ -1,19 +1,22 @@
 package state;
 
 import builder.Anuncio;
-import util.ConsoleLogger;
 
 public class EstadoSuspenso implements EstadoAnuncio {
     
-    public void publicar(Anuncio c) {
-        ConsoleLogger.log("Reenviando para rascunho para correção.");
+    @Override
+    public String publicar(Anuncio c) {
         c.setEstado(new EstadoRascunho());
+        return "Ação: O anúncio estava suspenso e foi movido para Rascunho para correções.";
     }
 
-    public void cancelar(Anuncio c) { 
+    @Override
+    public String cancelar(Anuncio c) { 
         c.setEstado(new EstadoRascunho()); 
+        return "Ação: O anúncio suspenso foi cancelado e retornou ao Rascunho.";
     }
 
+    @Override
     public String getNomeEstado() { 
         return "Suspenso"; 
     }

@@ -1,108 +1,103 @@
-import builder.Anuncio;
-import config.ConfigManager;
-import integration.ImportadorCSVImovel;
-import memento.HistoricoAnuncio;
+import fachada.MyHomeFachada;
 import model.*;
-import observerAndstrategy.*;
-import search.*;
-import state.*;
-import util.ConsoleLogger;
-import validation.*;
-
+import builder.Anuncio;
 import java.util.ArrayList;
 import java.util.List;
 
-// importar -> clonar -> criar -> errar -> desfazer -> validar -> publicar -> buscar (ordem da apresentação)
+
 public class Main {
-
     public static void main(String[] args) {
-        ConsoleLogger.log("=== Iniciando demonstração do MyHome ===");
-
-        // 1. Singleton (RF07)
-        ConfigManager config = ConfigManager.getInstance();
-        ConsoleLogger.log("Configurações carregadas. Preço mínimo: " + config.getConfig("preco.minimo"));
-
-        // 2. Template Method + Factory (E1)
-        ConsoleLogger.log("\n--- FASE 1: Importação de Dados (CSV) ---");
-        ImportadorCSVImovel importador = new ImportadorCSVImovel();
-        List<Imovel> imoveisCarregados = importador.importar("imoveis.csv");
-
-        // 3. Prototype (RF02)
-        ConsoleLogger.log("\n--- FASE 2: Uso de Protótipos (Clonagem) ---");
-        Imovel modelo = imoveisCarregados.get(0); // Pega a primeira Casa
-        Imovel copiaParaNovoAnuncio = modelo.clone();
-        copiaParaNovoAnuncio.setEndereco("Rua das Flores, 124 (Vizinho)");
-        ConsoleLogger.log("Protótipo clonado e ajustado: " + copiaParaNovoAnuncio.getEndereco());
-
-        // 4. Builder (RF01)
-        ConsoleLogger.log("\n--- FASE 3: Criação de Anúncio com Builder ---");
-        Anuncio meuAnuncio = new Anuncio.Builder()
-                .comTitulo("Casa de Veraneio")
-                .comDescricao("Ótima oportunidade!")
-                .comPreco(2500.0)
-                .paraImovel(copiaParaNovoAnuncio)
-                .build();
-        ConsoleLogger.log("Anúncio criado: " + meuAnuncio);
-
-        // 5. Memento (RF08)
-        ConsoleLogger.log("\n--- FASE 4: Histórico e Undo/Redo (Memento) ---");
-        HistoricoAnuncio historico = new HistoricoAnuncio();
-        historico.guardar(meuAnuncio.criarSnapshot()); // salva estado original
-
-        ConsoleLogger.log("Editando anúncio com erro...");
-        meuAnuncio = new Anuncio.Builder()
-                .comTitulo("TITULO ERRADO")
-                .comPreco(0.1) // preco invalido
-                .paraImovel(copiaParaNovoAnuncio)
-                .build();
-        ConsoleLogger.log("Estado com erro: " + meuAnuncio);
-
-        ConsoleLogger.log("Acionando DESFAZER...");
-        meuAnuncio.restaurar(historico.desfazer());
-        ConsoleLogger.log("Estado recuperado: " + meuAnuncio);
-
-        // 6. Observer + Strategy (RF05)
-        ConsoleLogger.log("\n--- FASE 5: Notificações Dinâmicas ---");
-        meuAnuncio.adicionarCanal(new NotificadorEmail());
-        meuAnuncio.adicionarCanal(new NotificadorWhatsApp());
-
-        // 7. Chain of Responsibility (RF03) + State (RF04)
-        ConsoleLogger.log("\n--- FASE 6: Validação e Ciclo de Vida ---");
-        ValidadorAnuncio corrente = new ValidadorPreco();
-        corrente.setProximo(new ValidadorTermosProibidos());
-
-        if (corrente.validar(meuAnuncio)) {
-            ConsoleLogger.log("Validação aprovada! Mudando estados...");
-            meuAnuncio.solicitarPublicacao(); // rascunho -> moderando
-            meuAnuncio.solicitarPublicacao(); // moderando -> ativo
-            
-            // Simulação de finalização
-            meuAnuncio.setEstado(new EstadoVendido());
-        }
-
-        // 8. Specification (RF06)
-        ConsoleLogger.log("\n--- FASE 7: Busca Avançada (Filtros) ---");
-        List<Anuncio> catalogo = new ArrayList<>();
-        catalogo.add(meuAnuncio); 
+        MyHomeFachada sistema = new MyHomeFachada();
         
-        // adiciona outro para teste
-        catalogo.add(new Anuncio.Builder()
-                .comTitulo("Apartamento Luxo")
-                .comPreco(8000.0)
-                .paraImovel(imoveisCarregados.get(1))
-                .build());
+        System.out.println("=== MYHOME: SISTEMA PROFISSIONAL DE ANÚNCIOS ===\n");
 
-        FiltroAnd filtroBusca = new FiltroAnd();
-        filtroBusca.adicionarFiltro(new FiltroTituloContem("Luxo"));
-        filtroBusca.adicionarFiltro(new FiltroPrecoMaximo(9000.0));
+        // carrega o config.properties e o imoveis.csv 
+        System.out.println(sistema.inicializar());
 
-        ConsoleLogger.log("Pesquisando por 'Luxo' até R$ 9000...");
-        for (Anuncio a : catalogo) {
-            if (filtroBusca.isSatisfeitoPor(a)) {
-                ConsoleLogger.log("Resultado encontrado: " + a.getTitulo());
+        Anunciante corretor = new Anunciante("Felipe Brito", "felipe@ifpb.edu.br", "83987762732", "CRECI-123");
+        
+        // lista de interessados 
+        List<Comprador> interessados = new ArrayList<>();
+        interessados.add(new Comprador("Joana Elise", "joana@teste.com", "83987768732"));
+
+        // DEMONSTRAÇÃO DE ERRO NA VALIDAÇÃO 
+        System.out.println("\n--- FASE: Teste de Segurança (Chain of Responsibility) ---");
+        Imovel imovelInvalido = sistema.getImovelDaBase(0);
+        
+        List<String> logsErro = sistema.cadastrarAnuncioRapido(
+            corretor, "Casa gratis", 500.0, imovelInvalido, interessados
+        );
+
+        logsErro.forEach(System.out::println);
+
+        Anuncio anuncioInvalido = sistema.getCatalogo().get(0);
+        List<String> logsErros = sistema.processarPublicacao(anuncioInvalido);
+            logsErros.forEach(System.out::println);
+
+        // pegamos um imóvel carregado do CSV e clonamos para não alterar a base original
+        Imovel imovelParaAnuncio = sistema.getImovelDaBase(1);
+
+        if (imovelParaAnuncio != null) {
+            
+            // cadastro
+            System.out.println("\n--- FASE 1: Cadastro e Observadores ---");
+            List<String> logsCadastro = sistema.cadastrarAnuncioRapido(
+                corretor, "Cobertura de luxo", 7000000.0, imovelParaAnuncio, interessados
+            );
+            logsCadastro.forEach(System.out::println);
+
+            Anuncio meuAnuncio = sistema.getCatalogo().get(1);
+
+            // 5. backup e erro
+            System.out.println("\n--- FASE 2: Histórico e Desfazer (Memento) ---");
+            sistema.salvarEstado(meuAnuncio); // salva o estado atual
+            System.out.println("[SISTEMA] Estado original salvo no Memento.");
+
+            System.out.println("Simulando alteração acidental de preço para R$ 500.000...");
+            meuAnuncio.setPreco(500000);
+            System.out.println("Preço atual com erro: R$ " + meuAnuncio.getPreco());
+
+            System.out.println("Acionando comando DESFAZER...");
+            System.out.println(sistema.desfazerAlteracao(meuAnuncio));
+            System.out.println("Preço recuperado: R$ " + meuAnuncio.getPreco());
+
+            // 6. validação
+            System.out.println("\n--- FASE 3: Validação em Cadeia e Ciclo de Vida ---");
+            List<String> logsPublicacao = sistema.processarPublicacao(meuAnuncio);
+            logsPublicacao.forEach(System.out::println);
+
+            // 7. busca com filtros
+            System.out.println("\n--- FASE 4: Filtros de Busca Avançados (Composite) ---");
+            String termo = "luxo";
+            double limite = 8000000.0;
+            
+            List<Anuncio> resultados = sistema.buscar(termo, limite);
+            
+            if (!resultados.isEmpty()) {
+                System.out.println("[BUSCA] " + resultados.size() + " anúncio(s) encontrado(s) para '" + termo + "':");
+                resultados.forEach(a -> System.out.println("   >> " + a.getTitulo() + " | R$ " + a.getPreco()));
+            } else {
+                System.out.println("[BUSCA] Nenhum resultado para os filtros aplicados.");
             }
+
+            // 8. notificação
+            System.out.println("\n--- FASE 5: Evento de Queda de Preço (Notificações Reais) ---");
+            double precoPromo = 6000000.0;
+            System.out.println("Promoção Relâmpago! Baixando de 7.000.000 para " + precoPromo);
+            
+            List<String> logsNotificacao = meuAnuncio.setPreco(precoPromo);
+
+            if (!logsNotificacao.isEmpty()) {
+                System.out.println("[SUCESSO] Notificações enviadas para a lista de interessados!");
+                logsNotificacao.forEach(log -> System.out.println("   -> " + log));
+            } else {
+                System.out.println("[AVISO] O preço não baixou ou não há interessados para notificar.");
+            }
+
+        } else {
+            System.err.println("[ERRO CRÍTICO] Base de dados vazia ou corrompida.");
         }
 
-        ConsoleLogger.log("\n=== Fim da demonstração do MyHome ===");
+        System.out.println("\n=== Demonstração finalizada com sucesso ===");
     }
 }

@@ -1,10 +1,9 @@
 package observerAndstrategy;
-
-import util.ConsoleLogger;
+import model.Usuario;
 
 public class NotificadorWhatsApp implements CanalNotificacao {
     @Override
-    public void enviar(String mensagem) {
-        ConsoleLogger.log("[WHATSAPP] Enviando: " + mensagem);
+    public String enviar(Usuario destinatario, String mensagem) {
+        return "[MOCK WPP] Destinatário: " + destinatario.getTelefone() + " | Msg: " + mensagem;
     }
 }

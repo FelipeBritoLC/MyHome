@@ -1,17 +1,20 @@
 package state;
 
 import builder.Anuncio;
-import util.ConsoleLogger;
 
 public class EstadoVendido implements EstadoAnuncio {
-    public void publicar(Anuncio c) { 
-        ConsoleLogger.log("Anúncio já vendido."); 
+
+    @Override
+    public String publicar(Anuncio c) { 
+        return "Operação negada: O imóvel já consta como Vendido/Arquivado."; 
     }
 
-    public void cancelar(Anuncio c) { 
-        ConsoleLogger.log("Não pode cancelar um anúncio vendido."); 
+    @Override
+    public String cancelar(Anuncio c) { 
+        return "Operação negada: Não é possível cancelar um anúncio de um imóvel já vendido."; 
     }
 
+    @Override
     public String getNomeEstado() { 
         return "Vendido/Arquivado"; 
     }
