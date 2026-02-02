@@ -1,9 +1,8 @@
 package state;
-
 import builder.Anuncio;
 
 public interface EstadoAnuncio {
-    void publicar(Anuncio contexto);
-    void cancelar(Anuncio contexto);
+    String publicar(Anuncio anuncio);
+    String cancelar(Anuncio anuncio);
     String getNomeEstado();
 }

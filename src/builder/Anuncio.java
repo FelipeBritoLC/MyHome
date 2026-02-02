@@ -1,21 +1,13 @@
 package builder;
 
-import model.Imovel;
-import model.Usuario;
-import model.Comprador;
+import model.*;
 import state.*;
 import observerAndstrategy.CanalNotificacao;
 import memento.AnuncioMemento;
-import util.ConsoleLogger;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Anuncio {
     private String titulo;
-    private String descricao;
     private double preco;
     private Imovel imovel;
     private Usuario anunciante;
@@ -23,73 +15,64 @@ public class Anuncio {
     private List<CanalNotificacao> canais = new ArrayList<>();
     private List<Comprador> favoritos = new ArrayList<>();
 
-    protected Anuncio() {
-        this.estadoAtual = new EstadoRascunho();
-    }
+    protected Anuncio() { this.estadoAtual = new EstadoRascunho(); }
 
-    public void adicionarCanal(CanalNotificacao canal) {
+    public String adicionarCanal(CanalNotificacao canal) {
         this.canais.add(canal);
+        return "Canal de notificação registrado.";
     }
 
-    public void favoritar(Comprador comprador) {
+    public String favoritar(Comprador comprador) {
         if (!favoritos.contains(comprador)) {
             this.favoritos.add(comprador);
-            ConsoleLogger.log("[SISTEMA] " + comprador.getNome() + " favoritou: " + titulo);
+            return "[SISTEMA] " + comprador.getNome() + " favoritou: " + titulo;
         }
+        return "Usuário já favoritou este anúncio.";
     }
 
-    private void notificarInteressados(String mensagem) {
+    private List<String> notificarInteressados(String mensagem) {
+        List<String> logs = new ArrayList<>();
+
         for (CanalNotificacao canal : canais) {
-
-            Set<String> destinosJaAvisados = new HashSet<>();
-
-            // 1. Notificar o Anunciante (Dono)
-            if (anunciante != null && anunciante.getTelefone() != null) {
-                canal.enviar(anunciante, mensagem);
-                destinosJaAvisados.add(anunciante.getTelefone());
-            }
-
-            // 2. Notificar os Favoritos (Compradores)
-            for (Comprador interessado : favoritos) {
-                // SÓ envia se o telefone for diferente de quem já recebeu
-                if (!destinosJaAvisados.contains(interessado.getTelefone())) {
-                    canal.enviar(interessado, mensagem);
-                    destinosJaAvisados.add(interessado.getTelefone());
+            
+                if (anunciante != null) {
+                    logs.add(canal.enviar(anunciante, mensagem));
                 }
-            }
+                for (Comprador interessado : favoritos) {
+                    logs.add(canal.enviar(interessado, mensagem));
+                }
         }
+        return logs;
     }
 
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public double getPreco() {
-        return preco;
-    }
-
-    public Imovel getImovel() {
-        return imovel;
-    }
-
-    public void setPreco(double novoPreco) {
-        if (novoPreco < this.preco) {
+    public List<String> setPreco(double novoPreco) {
+        List<String> logs = new ArrayList<>();
+        
+        // verificação de segurança para não notificar erros em rascunhos
+        if (novoPreco < this.preco && estadoAtual instanceof state.EstadoAtivo) {
             String alerta = "QUEDA DE PREÇO! O imóvel '" + titulo + "' agora custa R$ " + novoPreco;
-            notificarInteressados(alerta);
+            logs.addAll(notificarInteressados(alerta));
         }
+        
         this.preco = novoPreco;
+        return logs;
     }
 
-    public void setEstado(EstadoAnuncio novoEstado) {
-        this.estadoAtual = novoEstado;
-        notificarInteressados("O anúncio '" + titulo + "' agora está: " + novoEstado.getNomeEstado());
+    public List<String> solicitarPublicacao() {
+        String resultadoEstado = estadoAtual.publicar(this); 
+        List<String> logs = new ArrayList<>();
+        logs.add(resultadoEstado);
+        logs.addAll(notificarInteressados("O anúncio '" + titulo + "' mudou para: " + getStatus()));
+        return logs;
     }
 
-    public void solicitarPublicacao() { estadoAtual.publicar(this); }
+    public void setEstado(EstadoAnuncio novoEstado) { this.estadoAtual = novoEstado; }
     public String getStatus() { return estadoAtual.getNomeEstado(); }
     public String getTitulo() { return titulo; }
+    public double getPreco() { return preco; }
+    public Imovel getImovel() { return imovel; }
 
-    public AnuncioMemento criarSnapshot() { return new AnuncioMemento(titulo, descricao, preco); }
+    public AnuncioMemento criarSnapshot() { return new AnuncioMemento(titulo, "", preco); }
     public void restaurar(AnuncioMemento m) { if (m != null) { this.titulo = m.getTitulo(); this.preco = m.getPreco(); } }
 
     public static class Builder {

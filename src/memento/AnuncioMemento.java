@@ -13,7 +13,6 @@ public class AnuncioMemento {
         this.preco = preco;
     }
 
-    // Apenas getters, sem setters (Imutabilidade)
     public String getTitulo() { 
         return titulo; 
     }
